@@ -12,9 +12,9 @@ use pasta_curves::arithmetic::{FieldExt, Group, SqrtRatio};
 
 /// This represents an element of $\mathbb{F}_q$ where
 ///
-/// `q = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141`
+/// `q = 0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed`
 ///
-/// is the scalar field of the secp256k1 curve.
+/// is the scalar field of the curve25519 curve.
 // The internal representation of this type is four 64-bit unsigned
 // integers in little-endian order. `Fq` values are always in
 // Montgomery form; i.e., Fq(a) = aR mod q, with R = 2^256.
@@ -22,12 +22,12 @@ use pasta_curves::arithmetic::{FieldExt, Group, SqrtRatio};
 pub struct Fq(pub(crate) [u64; 4]);
 
 /// Constant representing the modulus
-/// q = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
+/// q = 0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed
 const MODULUS: Fq = Fq([
-    0xbfd25e8cd0364141,
-    0xbaaedce6af48a03b,
-    0xfffffffffffffffe,
-    0xffffffffffffffff,
+    0x5812631a5cf5d3ed,
+    0x14def9dea2f79cd6,
+    0x0000000000000000,
+    0x1000000000000000
 ]);
 
 /// The modulus as u32 limbs.
@@ -44,66 +44,78 @@ const MODULUS_LIMBS_32: [u32; 8] = [
 ];
 
 ///Constant representing the modulus as static str
-const MODULUS_STR: &str = "0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141";
+const MODULUS_STR: &str = "0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed";
 
 /// INV = -(q^{-1} mod 2^64) mod 2^64
-const INV: u64 = 0x4b0dff665588b13f;
+const INV: u64 = 0xd2b51da312547e1b;
 
 /// R = 2^256 mod q
-/// 0x14551231950b75fc4402da1732fc9bebf
-const R: Fq = Fq([0x402da1732fc9bebf, 0x4551231950b75fc4, 0x1, 0]);
+/// 0xffffffffffffffffffffffffffffffec6ef5bf4737dcf70d6ec31748d98951d
+const R: Fq = Fq([0xd6ec31748d98951d, 0xc6ef5bf4737dcf70, 0xfffffffffffffffe, 0xfffffffffffffff]);
 
 /// R^2 = 2^512 mod q
-/// 0x9d671cd581c69bc5e697f5e45bcd07c6741496c20e7cf878896cf21467d7d140
+/// 0x399411b7c309a3dceec73d217f5be65d00e1ba768859347a40611e3449c0f01
 const R2: Fq = Fq([
-    0x896cf21467d7d140,
-    0x741496c20e7cf878,
-    0xe697f5e45bcd07c6,
-    0x9d671cd581c69bc5,
+    0xa40611e3449c0f01,
+    0xd00e1ba768859347,
+    0xceec73d217f5be65,
+    0x399411b7c309a3d,
 ]);
 
 /// R^3 = 2^768 mod q
-/// 0x555d800c18ef116db1b31347f1d0b2da0017648444d4322c7bc0cfe0e9ff41ed
+/// 0xe530b773599cec78065dc6c04ec5b65278324e6aef7f3ec2a9e49687b83a2db
 const R3: Fq = Fq([
-    0x7bc0cfe0e9ff41ed,
-    0x0017648444d4322c,
-    0xb1b31347f1d0b2da,
-    0x555d800c18ef116d,
+    0x2a9e49687b83a2db,
+    0x278324e6aef7f3ec,
+    0x8065dc6c04ec5b65,
+    0xe530b773599cec7,
 ]);
 
 /// `GENERATOR = 7 mod r` is a generator of the `q - 1` order multiplicative
 /// subgroup, or in other words a primitive root of the field.
-const GENERATOR: Fq = Fq::from_raw([0x07, 0x00, 0x00, 0x00]);
+//const GENERATOR: Fq = Fq::from_raw([0x07, 0x00, 0x00, 0x00]);
 
 /// GENERATOR^t where t * 2^s + 1 = r
 /// with t odd. In other words, this
 /// is a 2^s root of unity.
 /// `0xc1dc060e7a91986df9879a3fbc483a898bdeab680756045992f4b5402b052f2`
-const ROOT_OF_UNITY: Fq = Fq::from_raw([
+/*const ROOT_OF_UNITY: Fq = Fq::from_raw([
     0x992f4b5402b052f2,
     0x98bdeab680756045,
     0xdf9879a3fbc483a8,
     0xc1dc060e7a91986,
-]);
+]);*/
 
 /// 1 / ROOT_OF_UNITY mod q
-const ROOT_OF_UNITY_INV: Fq = Fq::from_raw([
+/*const ROOT_OF_UNITY_INV: Fq = Fq::from_raw([
     0xb6fb30a0884f0d1c,
     0x77a275910aa413c3,
     0xefc7b0c75b8cbb72,
     0xfd3ae181f12d7096,
-]);
+]);*/
 
 /// 1 / 2 mod q
+/// 0x80000000000000000000000000000000a6f7cef517bce6b2c09318d2e7ae9f7
 const TWO_INV: Fq = Fq::from_raw([
-    0xdfe92f46681b20a1,
-    0x5d576e7357a4501d,
-    0xffffffffffffffff,
-    0x7fffffffffffffff,
+    0x2c09318d2e7ae9f7,
+    0x0a6f7cef517bce6b,
+    0x0000000000000000,
+    0x800000000000000,
 ]);
+
+// 2^((q-1)/4)
+// 0x94a7310e07981e77d3d6d60abc1c27a0ef0565342ce83febe8775dfebbe07d4
+const SQRT_TWO_POW:Fq = Fq::from_raw([
+    0xbe8775dfebbe07d4,
+    0x0ef0565342ce83fe,
+    0x7d3d6d60abc1c27a,
+    0x94a7310e07981e7
+]);
+
 
 const ZETA: Fq = Fq::zero();
 const DELTA: Fq = Fq::zero();
+const ROOT_OF_UNITY_INV: Fq = Fq::zero();
 
 use crate::{
     field_arithmetic, field_common, field_specific, impl_add_binop_specify_output,
@@ -163,17 +175,29 @@ impl ff::Field for Fq {
 
     /// Computes the square root of this element, if it exists.
     fn sqrt(&self) -> CtOption<Self> {
-        crate::arithmetic::sqrt_tonelli_shanks(self, &<Self as SqrtRatio>::T_MINUS1_OVER2)
+        // (q+3)//8
+        // 0x2000000000000000000000000000000029bdf3bd45ef39acb024c634b9eba7e
+        let tmp = self.pow(&[
+            0xcb024c634b9eba7e,
+            0x029bdf3bd45ef39a,
+            0x0000000000000000,
+            0x200000000000000,
+        ]);
+        let mut value = tmp * SQRT_TWO_POW;
+        value.conditional_assign(&tmp, tmp.square().ct_eq(self));
+        CtOption::new(value, value.square().ct_eq(self))
+        //crate::arithmetic::sqrt_tonelli_shanks(self, &<Self as SqrtRatio>::T_MINUS1_OVER2)
     }
 
     /// Computes the multiplicative inverse of this element,
     /// failing if the element is zero.
     fn invert(&self) -> CtOption<Self> {
+        // q-2
         let tmp = self.pow_vartime(&[
-            0xbfd25e8cd036413f,
-            0xbaaedce6af48a03b,
-            0xfffffffffffffffe,
-            0xffffffffffffffff,
+            0x5812631a5cf5d3eb,
+            0x14def9dea2f79cd6,
+            0x0000000000000000,
+            0x1000000000000000
         ]);
 
         CtOption::new(tmp, !self.ct_eq(&Self::zero()))
@@ -250,21 +274,22 @@ impl ff::PrimeField for Fq {
     }
 
     fn multiplicative_generator() -> Self {
-        GENERATOR
+        unimplemented!()
     }
 
     fn root_of_unity() -> Self {
-        ROOT_OF_UNITY
+        unimplemented!()
     }
 }
 
 impl SqrtRatio for Fq {
-    const T_MINUS1_OVER2: [u64; 4] = [
+    /*const T_MINUS1_OVER2: [u64; 4] = [
         0x777fa4bd19a06c82,
         0xfd755db9cd5e9140,
         0xffffffffffffffff,
         0x01ffffffffffffff,
-    ];
+    ];*/
+    const T_MINUS1_OVER2: [u64; 4] = [0, 0, 0, 0];
 
     fn get_lower_32(&self) -> u32 {
         let tmp = Fq::montgomery_reduce(self.0[0], self.0[1], self.0[2], self.0[3], 0, 0, 0, 0);
@@ -297,7 +322,7 @@ mod test {
         }
     }
 
-    #[test]
+    /*#[test]
     fn test_root_of_unity() {
         assert_eq!(
             Fq::root_of_unity().pow_vartime(&[1 << Fq::S, 0, 0, 0]),
@@ -308,10 +333,10 @@ mod test {
     #[test]
     fn test_inv_root_of_unity() {
         assert_eq!(Fq::ROOT_OF_UNITY_INV, Fq::root_of_unity().invert().unwrap());
-    }
+    }*/
 
     #[test]
     fn test_field() {
-        crate::tests::field::random_field_tests::<Fq>("secp256k1 scalar".to_string());
+        crate::tests::field::random_field_tests::<Fq>("curve25519 scalar".to_string());
     }
 }
