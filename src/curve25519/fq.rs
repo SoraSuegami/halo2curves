@@ -27,7 +27,7 @@ const MODULUS: Fq = Fq([
     0x5812631a5cf5d3ed,
     0x14def9dea2f79cd6,
     0x0000000000000000,
-    0x1000000000000000
+    0x1000000000000000,
 ]);
 
 /// The modulus as u32 limbs.
@@ -51,7 +51,12 @@ const INV: u64 = 0xd2b51da312547e1b;
 
 /// R = 2^256 mod q
 /// 0xffffffffffffffffffffffffffffffec6ef5bf4737dcf70d6ec31748d98951d
-const R: Fq = Fq([0xd6ec31748d98951d, 0xc6ef5bf4737dcf70, 0xfffffffffffffffe, 0xfffffffffffffff]);
+const R: Fq = Fq([
+    0xd6ec31748d98951d,
+    0xc6ef5bf4737dcf70,
+    0xfffffffffffffffe,
+    0xfffffffffffffff,
+]);
 
 /// R^2 = 2^512 mod q
 /// 0x399411b7c309a3dceec73d217f5be65d00e1ba768859347a40611e3449c0f01
@@ -105,13 +110,12 @@ const TWO_INV: Fq = Fq::from_raw([
 
 // 2^((q-1)/4)
 // 0x94a7310e07981e77d3d6d60abc1c27a0ef0565342ce83febe8775dfebbe07d4
-const SQRT_TWO_POW:Fq = Fq::from_raw([
+const SQRT_TWO_POW: Fq = Fq::from_raw([
     0xbe8775dfebbe07d4,
     0x0ef0565342ce83fe,
     0x7d3d6d60abc1c27a,
-    0x94a7310e07981e7
+    0x94a7310e07981e7,
 ]);
-
 
 const ZETA: Fq = Fq::zero();
 const DELTA: Fq = Fq::zero();
@@ -197,7 +201,7 @@ impl ff::Field for Fq {
             0x5812631a5cf5d3eb,
             0x14def9dea2f79cd6,
             0x0000000000000000,
-            0x1000000000000000
+            0x1000000000000000,
         ]);
 
         CtOption::new(tmp, !self.ct_eq(&Self::zero()))

@@ -66,16 +66,16 @@ const TWO_INV: Fp = Fp::from_raw([
     0xFFFFFFFFFFFFFFF7,
     0xFFFFFFFFFFFFFFFF,
     0xFFFFFFFFFFFFFFFF,
-    0x3FFFFFFFFFFFFFFF
+    0x3FFFFFFFFFFFFFFF,
 ]);
 
 // 2^((p-1)/4)
 // 0x2b8324804fc1df0b2b4d00993dfbd7a72f431806ad2fe478c4ee1b274a0ea0b0
-const SQRT_TWO_POW:Fp = Fp::from_raw([
+const SQRT_TWO_POW: Fp = Fp::from_raw([
     0xc4ee1b274a0ea0b0,
     0x2f431806ad2fe478,
     0x2b4d00993dfbd7a7,
-    0x2b8324804fc1df0b
+    0x2b8324804fc1df0b,
 ]);
 
 const ZETA: Fp = Fp::zero();
@@ -265,7 +265,7 @@ mod test {
     fn test_sqrt() {
         // NB: TWO_INV is standing in as a "random" field element
         let v = (Fp::from_u128(11)).square().sqrt().unwrap();
-        assert!(v ==Fp::from_u128(11) || (-v) == Fp::from_u128(11));
+        assert!(v == Fp::from_u128(11) || (-v) == Fp::from_u128(11));
 
         for _ in 0..10000 {
             let a = Fp::random(OsRng);
